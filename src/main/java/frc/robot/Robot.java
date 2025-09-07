@@ -5,18 +5,29 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 
-/**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
- * this project, you must also update the Main.java file in the project.
- */
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  public Robot() {}
+  private VictorSP leftDrive;
+  private VictorSP rightDrive;
+
+  private XboxController controller;
+
+  private DifferentialDrive m_robotDrive;
+
+  public Robot() {
+    leftDrive = new VictorSP(1);
+    rightDrive = new VictorSP(0);
+
+    rightDrive.setInverted(true);
+
+
+    controller = new XboxController(0);
+
+    m_robotDrive = new DifferentialDrive(leftDrive::set, rightDrive::set);
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -31,7 +42,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotDrive.arcadeDrive(-controller.getLeftY(), -controller.getRightX());
+  }
 
   @Override
   public void disabledInit() {}
