@@ -57,8 +57,8 @@ public class Robot extends TimedRobot {
       PersistMode.kNoPersistParameters);
 
     shooterHood.configure(new SparkMaxConfig().idleMode(IdleMode.kCoast),
-     ResetMode.kResetSafeParameters,
-     PersistMode.kNoPersistParameters);
+      ResetMode.kResetSafeParameters,
+      PersistMode.kNoPersistParameters);
 
     m_robotDrive = new DifferentialDrive(leftDriveMotor::set, rightDriveMotor::set);
 
@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
 //THIS NEEDS TO BE EDITED WITH THE REAL ROBOT!!!
     if (controller.getAButton()) {
       shooterHood.set(0); //raise hood
-      if (hoodEncoder.getPosition() < 0) {
+      if (hoodEncoder.getPosition() > 0) {
         shooterHood.set(0); //stops hood at desired height
       } else {
         shooterHood.set(0); //if not at desired position, continue
@@ -129,13 +129,29 @@ public class Robot extends TimedRobot {
 
     if (controller.getBButton()) {
       shooterHood.set(0); //lowers hood
-      if (hoodEncoder.getPosition() < 0) {
+      if (hoodEncoder.getPosition() == 0) {
         shooterHood.set(0); //stops hood when its lowered
       } else {
         shooterHood.set(0); //if hood is not fully lowered, continue
       }
     } else {
-      shooterHood.set(0); //stops motor
+      shooterHood.set(0); //stops motor when no button is pressed
+    }
+
+    if (controller.getYButton()) {
+      if (hoodEncoder.getPosition() > 0) {
+        shooterHood.set(0); //stops hood at desired height
+        } else {
+          shooterHood.set(0); //if not at desired position, contine
+        } if (hoodEncoder.getPosition() == 0) {
+          shooterFlyWheelA.setVoltage(3); //sets shooter voltage to 3 if hood is at position
+        } if (shooterEncoder.getVelocity() < 1200) {
+          shooterIndexer.setVoltage(1); //sets shooter indexer voltage to 1 if shooter is at 3 volt velocity
+        }
+    } else {
+      shooterFlyWheelA.setVoltage(0);
+      shooterIndexer.setVoltage(0);
+      shooterHood.set(0); //stop all motors if no button is pressed
     }
   }
 
